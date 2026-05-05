@@ -1,215 +1,239 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MR Loja</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR Loja</title>
 
-<style>
-body{font-family:Arial;margin:0;background:#0f172a;color:#fff}
-header{background:#0f172a;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid orange}
-.logo{font-size:28px;font-weight:bold;display:flex;gap:10px;color:#3b82f6}
-.login-icon{font-size:22px;cursor:pointer}
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #0f172a; color: #fff; padding-bottom: 80px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #020617; border-bottom: 3px solid orange; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 26px; color: #3b82f6; cursor: pointer; font-weight: bold; }
+        .login { cursor: pointer; font-size: 24px; background: #1e293b; padding: 5px 12px; border-radius: 50%; }
 
-.container{padding:20px;max-width:1000px;margin:auto}
+        .container { padding: 20px; max-width: 1000px; margin: auto; }
+        .produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
 
-.produtos{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
+        .card { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
+        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; background: #0f172a; }
+        .card h4 { margin: 10px 0 5px; }
 
-.card{background:#1e293b;border-radius:12px;padding:15px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,0.3)}
-.preco{color:orange;font-weight:bold}
+        .preco { color: orange; font-weight: bold; font-size: 1.2rem; margin: 5px 0; }
 
-img{width:100%;height:150px;object-fit:cover;border-radius:8px}
+        button { background: #3b82f6; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { opacity: 0.8; }
+        .btn-excluir { background: #ef4444; margin-top: 5px; width: 100%; }
 
-button{background:#3b82f6;color:#fff;border:none;padding:8px;border-radius:6px;margin-top:5px;cursor:pointer}
-button:hover{background:#2563eb}
+        .admin-box { display: none; background: #1e293b; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px dashed #3b82f6; }
+        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #334155; border-radius: 5px; background: #0f172a; color: #fff; box-sizing: border-box; }
 
-.cart-btn{position:fixed;right:20px;bottom:20px;background:orange;color:#000;border-radius:999px;padding:14px;cursor:pointer;font-weight:bold}
-
-.cart-box{position:fixed;bottom:80px;right:20px;background:#1e293b;border-radius:10px;padding:10px;width:260px;display:none}
-
-.admin-box{background:#1e293b;padding:10px;margin-bottom:15px;border-radius:10px;display:none}
-
-input{width:100%;margin:5px 0;padding:8px;border-radius:6px;border:none}
-
-.admin-exit{position:fixed;top:80px;right:20px;background:red;color:#fff;padding:8px;border:none;border-radius:6px}
-</style>
-
+        /* Carrinho */
+        .cart { position: fixed; bottom: 20px; right: 20px; background: orange; color: #000; padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; }
+        .cartBox { position: fixed; bottom: 85px; right: 20px; background: #1e293b; padding: 15px; border-radius: 12px; width: 280px; display: none; border: 1px solid orange; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 1000; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        .btn-remove { background: #ef4444; padding: 2px 8px; font-size: 12px; margin-left: 5px; }
+    </style>
 </head>
+
 <body>
 
-<header id="logo">
-<div class="logo">🚗 MR Loja</div>
-<div class="login-icon" onclick="loginGoogle()">👤</div>
+<header>
+    <div class="logo" id="logoMain">🚗 MR Loja</div>
+    <div class="login" onclick="loginGoogle()">👤</div>
 </header>
 
-<button id="sairAdmin" class="admin-exit" style="display:none" onclick="logout()">Sair</button>
-
 <div class="container">
+    <div id="adminBox" class="admin-box">
+        <h3>Painel do Administrador</h3>
+        <input id="nomeInput" placeholder="Nome do Produto">
+        <input id="precoInput" type="number" placeholder="Preço (Ex: 50.00)">
+        <input id="imagemInput" placeholder="URL da Imagem">
+        <button onclick="addProduto()" style="width: 100%;">Adicionar Produto</button>
+    </div>
 
-<div id="adminBox" class="admin-box">
-<input id="nome" placeholder="Nome do produto">
-<input id="preco" placeholder="Preço">
-<input id="imagem" placeholder="URL da imagem">
-<button onclick="addProduto()">Adicionar Produto</button>
+    <div id="lista" class="produtos">
+        </div>
 </div>
 
-<div class="produtos" id="listaProdutos"></div>
+<div class="cart" onclick="toggleCart()">🛒 R$ <span id="total">0.00</span></div>
 
+<div id="cartBox" class="cartBox">
+    <h4 style="margin-top:0">Seu Pedido</h4>
+    <div id="itensCarrinho"></div>
+    <hr>
+    <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:10px">
+        <span>Total:</span>
+        <span id="totalCarrinho">R$ 0.00</span>
+    </div>
+    <button onclick="finalizar()" style="width:100%; background: #22c55e;">Finalizar no WhatsApp</button>
 </div>
-
-<div class="cart-btn" onclick="toggleCart()">🛒 R$ <span id="total">0</span></div>
-<div class="cart-box" id="cartBox"></div>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,collection,onSnapshot,addDoc,deleteDoc,doc}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import{getAuth,signInWithPopup,GoogleAuthProvider,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig={
-apiKey:"AIzaSyAvaF-ppTlCkglojighky9LtsUoanZS_kI",
-authDomain:"mr-loja-4545.firebaseapp.com",
-projectId:"mr-loja-4545"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvaF-ppTlCkglojighky9LtsUoanZS_kI",
+        authDomain: "mr-loja-4545.firebaseapp.com",
+        projectId: "mr-loja-4545"
+    };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const auth=getAuth(app);
-const provider=new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-const EMAILS_ADMIN=["lojamr.auto@gmail.com","arthurfigueiredo017@gmail.com"];
+    const ADM_EMAILS = [
+        "lojamr.auto@gmail.com",
+        "arthurfigueiredo017@gmail.com"
+    ];
 
-let user=null;
-let admin=false;
-let liberar=false;
-let carrinho=[];
-let produtos=[];
+    let user = null;
+    let admin = false;
+    let produtos = [];
+    let carrinho = [];
 
-window.loginGoogle=async()=>{await signInWithPopup(auth,provider)}
+    // --- AUTENTICAÇÃO ---
+    window.loginGoogle = async () => {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("Erro login:", error);
+        }
+    };
 
-window.logout=async()=>{
-await signOut(auth);
-admin=false;
-liberar=false;
-updateUI();
-}
+    onAuthStateChanged(auth, (u) => {
+        user = u;
+        if (u && ADM_EMAILS.includes(u.email.toLowerCase())) {
+            admin = true;
+        } else {
+            admin = false;
+        }
+        updateUI();
+    });
 
-onAuthStateChanged(auth,u=>{
-user=u;
+    // --- FUNÇÕES DE PRODUTO ---
+    window.addProduto = async () => {
+        const nome = document.getElementById("nomeInput").value.trim();
+        const preco = Number(document.getElementById("precoInput").value);
+        const imagem = document.getElementById("imagemInput").value.trim();
 
-if(u){
-if(!EMAILS_ADMIN.includes(u.email.toLowerCase())){
-alert("Acesso negado: você não é administrador");
-admin=false;
-}else{
-admin=liberar;
-}
-}else{
-admin=false;
-}
+        if (!nome || !preco || !imagem) return alert("Preencha todos os campos!");
 
-updateUI();
-});
+        await addDoc(collection(db, "produtos"), { nome, preco, imagem });
+        
+        document.getElementById("nomeInput").value = "";
+        document.getElementById("precoInput").value = "";
+        document.getElementById("imagemInput").value = "";
+        alert("Produto adicionado!");
+    };
 
-let clicks=0;
-document.getElementById("logo").addEventListener("click",()=>{
-clicks++;
-if(clicks===5){
-liberar=true;
-loginGoogle();
-clicks=0;
-}
-setTimeout(()=>clicks=0,1500);
-});
+    window.excluir = async (id) => {
+        if (confirm("Deseja apagar este produto do catálogo?")) {
+            await deleteDoc(doc(db, "produtos", id));
+        }
+    };
 
-function updateUI(){
-document.getElementById("adminBox").style.display=admin?"block":"none";
-document.getElementById("sairAdmin").style.display=admin?"block":"none";
-renderProdutos();
-}
+    // --- FUNÇÕES DO CARRINHO ---
+    window.addCarrinho = (nome, preco) => {
+        const item = carrinho.find(p => p.nome === nome);
+        if (item) {
+            item.qtd++;
+        } else {
+            carrinho.push({ nome, preco: Number(preco), qtd: 1 });
+        }
+        renderCart();
+    };
 
-window.addProduto=async()=>{
-if(!admin)return;
+    window.removerDoCarrinho = (index) => {
+        if (carrinho[index].qtd > 1) {
+            carrinho[index].qtd--;
+        } else {
+            carrinho.splice(index, 1);
+        }
+        renderCart();
+    };
 
-const nome=document.getElementById("nome").value.trim();
-const preco=Number(document.getElementById("preco").value);
-const imagem=document.getElementById("imagem").value.trim();
+    window.toggleCart = () => {
+        const box = document.getElementById("cartBox");
+        box.style.display = box.style.display === "block" ? "none" : "block";
+    };
 
-if(!nome||!preco||!imagem)return alert("Preencha tudo");
+    function renderCart() {
+        const container = document.getElementById("itensCarrinho");
+        const totalEl = document.getElementById("total");
+        const totalBoxEl = document.getElementById("totalCarrinho");
+        let total = 0;
 
-await addDoc(collection(db,"produtos"),{nome,preco,imagem});
+        container.innerHTML = "";
 
-document.getElementById("nome").value="";
-document.getElementById("preco").value="";
-document.getElementById("imagem").value="";
-}
+        carrinho.forEach((p, index) => {
+            total += p.preco * p.qtd;
+            container.innerHTML += `
+            <div class="item-carrinho">
+                <div>
+                    <span>${p.nome}</span><br>
+                    <small>${p.qtd}x R$ ${p.preco.toFixed(2)}</small>
+                </div>
+                <button class="btn-remove" onclick="removerDoCarrinho(${index})">Remover</button>
+            </div>`;
+        });
 
-window.excluirProduto=async(id)=>{
-if(!admin)return;
-await deleteDoc(doc(db,"produtos",id));
-}
+        if (carrinho.length === 0) container.innerHTML = "<p>Carrinho vazio</p>";
 
-window.addCarrinho=(nome,preco)=>{
-const item=carrinho.find(p=>p.nome===nome);
-if(item){item.qtd++}else{carrinho.push({nome,preco:Number(preco),qtd:1})}
-renderCart();
-}
+        totalEl.innerText = total.toFixed(2);
+        totalBoxEl.innerText = "R$ " + total.toFixed(2);
+    }
 
-function renderCart(){
-const box=document.getElementById("cartBox");
-let total=0;
-box.innerHTML="";
+    window.finalizar = () => {
+        if (carrinho.length === 0) return alert("Seu carrinho está vazio!");
+        if (!user) return alert("Faça login clicando no ícone de usuário para pedir.");
 
-carrinho.forEach(p=>{
-total+=p.preco*p.qtd;
-box.innerHTML+=`<div>${p.nome} x${p.qtd}</div>`;
-});
+        let msg = `*Novo Pedido - MR Loja*\n\n`;
+        msg += `*Cliente:* ${user.displayName}\n`;
+        msg += `--------------------------\n`;
+        
+        let total = 0;
+        carrinho.forEach(p => {
+            msg += `• ${p.nome} (${p.qtd}x) - R$ ${(p.preco * p.qtd).toFixed(2)}\n`;
+            total += p.preco * p.qtd;
+        });
 
-box.innerHTML+=`<hr>Total: R$ ${total.toFixed(2)}<br><button onclick="finalizar()">Finalizar</button>`;
-document.getElementById("total").innerText=total.toFixed(2);
-}
+        msg += `\n*Total: R$ ${total.toFixed(2)}*`;
+        
+        const tel = "5571991813374";
+        window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`);
+    };
 
-window.toggleCart=()=>{
-const box=document.getElementById("cartBox");
-box.style.display=box.style.display==="block"?"none":"block";
-}
+    // --- INTERFACE ---
+    function updateUI() {
+        document.getElementById("adminBox").style.display = admin ? "block" : "none";
+        renderLoja();
+    }
 
-window.finalizar=()=>{
-if(!user)return alert("Faça login");
+    function renderLoja() {
+        const lista = document.getElementById("lista");
+        lista.innerHTML = "";
 
-let msg=`Cliente: ${user.displayName}\nEmail: ${user.email}\n\nPedido:\n`;
-let total=0;
+        produtos.forEach(p => {
+            lista.innerHTML += `
+            <div class="card">
+                <img src="${p.imagem}" alt="${p.nome}">
+                <h4>${p.nome}</h4>
+                <p class="preco">R$ ${Number(p.preco).toFixed(2)}</p>
+                <button onclick="addCarrinho('${p.nome}','${p.preco}')" style="width:100%">Comprar</button>
+                ${admin ? `<button class="btn-excluir" onclick="excluir('${p.id}')">Excluir</button>` : ""}
+            </div>`;
+        });
+    }
 
-carrinho.forEach(p=>{
-msg+=`- ${p.nome} x${p.qtd}\n`;
-total+=p.preco*p.qtd;
-});
-
-msg+=`\nTotal: R$ ${total.toFixed(2)}`;
-
-window.open(`https://wa.me/5571991813374?text=${encodeURIComponent(msg)}`);
-}
-
-function renderProdutos(){
-const lista=document.getElementById("listaProdutos");
-lista.innerHTML="";
-
-produtos.forEach(p=>{
-lista.innerHTML+=`
-<div class="card">
-<img src="${p.imagem}">
-<h4>${p.nome}</h4>
-<p class="preco">R$ ${p.preco}</p>
-<button onclick="addCarrinho('${p.nome}','${p.preco}')">Adicionar</button>
-${admin?`<button onclick="excluirProduto('${p.id}')">Excluir</button>`:""}
-</div>`;
-});
-}
-
-onSnapshot(collection(db,"produtos"),snap=>{
-produtos=[];
-snap.forEach(d=>produtos.push({...d.data(),id:d.id}));
-renderProdutos();
-});
+    // Escuta mudanças no banco do Firebase
+    onSnapshot(collection(db, "produtos"), (snap) => {
+        produtos = [];
+        snap.forEach(d => produtos.push({ ...d.data(), id: d.id }));
+        renderLoja();
+    });
 </script>
 
 </body>
